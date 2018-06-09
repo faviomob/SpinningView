@@ -5,9 +5,7 @@ _WidgetKit_ framework allows you to compose native apps without a code and load 
 
 > _WidgetKit_ uses _MVC_-based technique of _mediating controllers_, which were introduced with _Cocoa Bindings_ in _AppKit_ for _macOS_ - `NSObjectController` and its descendants. Read more about this technique [here](https://developer.apple.com/library/archive/documentation/General/Conceptual/CocoaEncyclopedia/Model-View-Controller/Model-View-Controller.html#//apple_ref/doc/uid/TP40010810-CH14) (although, this is not direct port of it).
 
-_WidgetKit_ view controllers consist of predefined and 100% reusable objects (`NSObject`s), or _mediating controllers_, which control presentation of views inside their view controller. You put these _mediator_ objects onto the view controllers' scene in the _Interface Builder_, set their properties via _User Defined Runtime Attributes_ and connect outlets between them and your UI elements. Or, alternatively, you can load all this setup through corresponding _JSON_ files, and that's what will be demonstrated in this document.
-
-> ☝️ This is not a set of ready-to-use views and view controllers. Your _UI_ is completly under your control.
+_WidgetKit_ view controllers consist of predefined and 100% reusable objects (`NSObject`s), or _mediating controllers_, which control presentation of views inside their view controller. You put these _mediator_ objects onto the view controllers' scene in the _Interface Builder_, set their properties via _User Defined Runtime Attributes_ and connect outlets between them and your UI elements. Or, alternatively, you can load all this setup through corresponding _JSON_ files, and that's what will be described in this document.
 
 ## Features:
 
@@ -21,6 +19,8 @@ _WidgetKit_ view controllers consist of predefined and 100% reusable objects (`N
 - Propagate content object between view controllers on segue;
 - Control presentation of particular UI elements in the view controller when specific data changes;
 - Calculate views geometry in the background for faster scrolling;
+
+> Keep in mind, that _WidgetKit_ is not a set of ready-to-use views and view controllers. Your _UI_ is completly under your control.
 
 ## Demo
 
@@ -55,9 +55,9 @@ This is how this setup looks like (GIF, 10Mb):
 <img width="272" src="https://raw.githubusercontent.com/m8labs/GraffitiSamples/gh-pages/images/TwitterDemo.png">
 </p>
 
-### Building Widget
+### Building a Widget
 
-Now, let's see how you can create widget app itself. The easiest way to begin is to open the _WidgetDemo_ sample app project.
+Now, let's see how you can create widget app itself. The easiest way to understand how things work is to open the _WidgetHostDemo_ sample project and run it.
 
 #### Concepts
 
@@ -143,7 +143,7 @@ As you can see, we use _JSON_ object `id` as a reference across the entire view 
 
 Here you can see how logic can be integrated within the widget app - `predicateFormat` has a standard syntax of the `NSPredicate(format:)` and is evaluated against the scope of this view controller. So, if the value of `content` property for this view controller is equal to `nil` (i.e. there is no current user), then `text` property of the label will be set to the `ifTrue` expression value (empty string). Otherwise, it will be set to the result of the `content.name` substitution, i.e. `name` of the user.
 
-> ☝️ For all _UI_ elements, that we refer here, string identifier must be set via `wx.identifier` property in the _User Defined Runtime Attributes_ section of the _Interface Bulder_.
+> For all _UI_ elements, that we refer here, string identifier must be set via `wx.identifier` property in the _User Defined Runtime Attributes_ section of the _Interface Bulder_.
 
 Fine, now we have our view controller set with `content` object, and all elements are updated. Let's see then how we can populate our `UITableView`. First, we need to fetch data for our table, that's what the "homeFeedContentProvider" is for:
 
@@ -257,7 +257,7 @@ Of course, you must include this code into your host application, as widgets sho
 
 ### Networking
 
-Finally, let's dig little bit deeper into networking with _WidgetKit_. First, look at a special `@self` element in the `bindings` section:
+Finally, let's dig little bit deeper into networking with _WidgetKit_. First, look at a special `@self` element in the `bindings` section. It used to set properties and their bindings for the current view controller:
 
 ```JSON
 "@self": {
@@ -346,7 +346,7 @@ And this outlet connection:
 
 If any of the `mandatoryFields` occurs to be empty, the appropriate view will be "shaked" by default, but you can change this behavior by overriding `FormDisplayView.highlightField` method. If all values are good, "newPost" action will be called with the value of "text" field name substituted in the `parameters` dictionary.
 
-> ☝️ Your service should return the newly created object, otherwise it will not be displayed, because local object creation is not yet supported.
+> Your service should return the newly created object, otherwise it will not be displayed, because local object creation is not yet supported.
 
 #### Dates
 
@@ -368,7 +368,7 @@ The last thing I would like to discuss is processing of dates. You can receive v
 
 Then you refer this transformer by its `id` in _CoreData Model Designer_ as described [here](https://github.com/gonzalezreal/Groot/blob/master/Documentation/Annotations.md).
 
-`debugDelay` is used by `StubServiceProvider` for simulation of a loading process, so you can check how your UI looks like during network delays.
+`debugDelay` is used by `StubServiceProvider` for simulation of a loading process, so you can check how your _UI_ looks like during network delays.
 
 ### Deploy
 
@@ -376,9 +376,9 @@ After you finish all layers of your widget, you will need to properly pack it in
 
 app itself (no extension), "Frameworks" folder, any "*.dylib" files, "PkgInfo" file, "CodeSignature" folder.
 
-> ☝️ You can leave only "*.json", "*.momd", "*.car", "*.storyboardc", "*.nib" files, any images and "Info.plist".
+> You can leave only "*.json", "*.momd", "*.car", "*.storyboardc", "*.nib" files, any images and "Info.plist".
 
-After this total cleanup, you can include this bundle into your host application directly and load it via `WidgetView.load(resource: String)` method, or _zip_ it and upload to a remote server, where it can be accessed via _http_.
+After this total cleanup, you can include this bundle into your host application directly and load it via `WidgetView.load(resource:)` method, or _zip_ it and upload to a remote server, where it can be accessed via _http_.
 
 That's pretty it! I hope you have enjoyed this reading and I would very appreciate your feedback!
 
